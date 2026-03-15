@@ -382,7 +382,7 @@ function renderList(){
   document.getElementById('s2').textContent=dset.size;
   document.getElementById('s3').textContent=bset.size;
   if(!arr.length){el.innerHTML='<div class="empty"><div class="eicon">🔍</div>검색 결과 없음</div>';return;}
-  el.innerHTML=arr.map(s=>{
+  el.innerHTML=arr.map((s,i)=>{
     const rec=getRec(s.id);
     const hL=!!rec?.lateTime, hD=!!rec?.dress, both=hL&&hD;
     const cls='card'+(both?' cld':hL?' cl':hD?' cd':'');
@@ -390,13 +390,15 @@ function renderList(){
     return `<div class="${cls}">
       <div class="ctop"><div class="cinfo"><span class="cnum">${s.id}</span><span class="cname">${s.name}</span></div><div class="cbadges">${bdg}</div></div>
       <div class="cbtns">
-        <button class="btn btn-l${hL?' off':''}" onclick="doLate('${s.id}')">${hL?`✓ 지각 ${rec.lateTime}`:'⏰ 지각체크'}</button>
-        <button class="btn btn-d${hD?' off':''}" onclick="openModal('${s.id}')">${hD?`✓ ${rec.dress}`:'👕 복장체크'}</button>
+        <button class="btn btn-l${hL?' off':''}" data-sid="${s.id}" onclick="doLateByEl(this)">${hL?`✓ 지각 ${rec.lateTime}`:'⏰ 지각체크'}</button>
+        <button class="btn btn-d${hD?' off':''}" data-sid="${s.id}" onclick="openModalByEl(this)">${hD?`✓ ${rec.dress}`:'👕 복장체크'}</button>
       </div></div>`;
   }).join('');
 }
 
 // LATE
+function doLateByEl(el){ doLate(el.getAttribute('data-sid')); }
+function openModalByEl(el){ openModal(el.getAttribute('data-sid')); }
 async function doLate(sid){
   if(!isLate()){toast('⏰ 아직 08:00 이전입니다');return;}
   const rec=getRec(sid); if(rec?.lateTime)return;
