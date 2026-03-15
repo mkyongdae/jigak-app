@@ -603,10 +603,17 @@ async function post(payload) {
     localStorage.setItem('demo_recs', JSON.stringify(records));
     return { success: true };
   }
-  const r = await fetch(URL, {
-    method: 'POST',
-    body: JSON.stringify({ action:'saveRecord', teacher:NAME, ...payload })
+  // GET 방식으로 변경 (Apps Script CORS 문제 해결)
+  const p = new URLSearchParams({
+    action:      'saveRecord',
+    teacher:     NAME,
+    type:        payload.type,
+    studentId:   payload.studentId,
+    studentName: payload.studentName || '',
+    time:        payload.time || '',
+    dress:       payload.dress || ''
   });
+  const r = await fetch(URL + '?' + p.toString());
   return r.json();
 }
 
